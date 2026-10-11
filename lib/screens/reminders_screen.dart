@@ -463,8 +463,8 @@ class _RemindersScreenState extends State<RemindersScreen>
                     AppFeedback.showInfo(
                       context,
                       !reminder.muted
-                          ? 'Voice announcement silenced'
-                          : 'Voice announcement active',
+                          ? 'Voice announcement active'
+                          : 'Voice announcement silenced',
                     );
                   },
                 ),
