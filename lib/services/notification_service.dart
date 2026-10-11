@@ -20,7 +20,20 @@ Future<void> notificationTapBackground(
     NotificationResponse notificationResponse) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Try to forward to the active main UI isolate first
+  // If action is Mute or Done, immediately stop TTS without waiting
+  final actionType =
+      NotificationActionType.fromId(notificationResponse.actionId);
+  if (actionType == NotificationActionType.mute ||
+      actionType == NotificationActionType.done) {
+    try {
+      await TTSService().stop();
+    } catch (_) {}
+  }
+
+  // Always execute action directly in this isolate to persist changes into Hive
+  await NotificationService.handleActionResponse(notificationResponse);
+
+  // Also notify the active main UI isolate if running so providers/UI can update
   final sendPort =
       IsolateNameServer.lookupPortByName(NotificationService.portName);
   if (sendPort != null) {
@@ -29,11 +42,7 @@ Future<void> notificationTapBackground(
       'actionId': notificationResponse.actionId,
       'notificationId': notificationResponse.id,
     });
-    return;
   }
-
-  // App was killed/terminated: execute action directly in this background isolate
-  await NotificationService.handleActionResponse(notificationResponse);
 }
 
 class NotificationService {
@@ -372,6 +381,17 @@ class NotificationService {
           try {
             await TTSService().stop();
           } catch (_) {}
+          if (notificationId != null) {
+            try {
+              await _notifications.show(
+                notificationId,
+                '${reminder.title} (Voice Muted)',
+                'Voice announcement has been muted for this reminder.',
+                _notificationDetails(reminderId: reminder.id),
+                payload: reminder.id,
+              );
+            } catch (_) {}
+          }
           break;
       }
     } catch (e) {

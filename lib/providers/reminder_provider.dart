@@ -293,6 +293,7 @@ class ReminderProvider extends ChangeNotifier {
     final current = _reminders[index];
     current.muted = true;
     HiveService.reminderBox.put(current.id, current.toMap());
+    TTSService().stop();
     notifyListeners();
   }
 
@@ -312,6 +313,9 @@ class ReminderProvider extends ChangeNotifier {
 
     final current = _reminders[index];
     current.muted = !current.muted;
+    if (current.muted) {
+      TTSService().stop();
+    }
     HiveService.reminderBox.put(current.id, current.toMap());
     notifyListeners();
   }
@@ -377,6 +381,20 @@ class ReminderProvider extends ChangeNotifier {
       case NotificationActionType.mute:
         muteReminder(targetId);
         TTSService().stop();
+        if (notificationId != null) {
+          final reminder = _reminders.cast<Reminder?>().firstWhere(
+                (r) => r?.id == targetId,
+                orElse: () => null,
+              );
+          if (reminder != null) {
+            NotificationService.showNotification(
+              id: notificationId,
+              title: '${reminder.title} (Voice Muted)',
+              body: 'Voice announcement has been muted for this reminder.',
+              payload: reminder.id,
+            );
+          }
+        }
         break;
     }
   }

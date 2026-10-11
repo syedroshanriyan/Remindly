@@ -86,7 +86,7 @@ Run the automated test suite:
 ```powershell
 flutter test
 ```
-All **108 tests** (unit tests & widget tests) pass with 0 failures.
+All **28 tests** (unit tests & widget tests) pass with 0 failures.
 
 Run static analysis:
 ```powershell
@@ -124,3 +124,20 @@ flutter build appbundle --release
 flutter build apk --release
 ```
 
+---
+
+## 📄 Documentation
+
+Comprehensive release documentation is available in `docs/`:
+- [Product Specification](docs/PRODUCT_SPEC.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Design System](docs/DESIGN_SYSTEM.md)
+- [ML Training](docs/ML_TRAINING.md)
+- [Notification System](docs/NOTIFICATION_SYSTEM.md)
+- [Privacy Architecture](docs/PRIVACY_ARCHITECTURE.md)
+- [Security](docs/SECURITY.md)
+- [Testing](docs/TESTING.md)
+- [Release](docs/RELEASE.md)
+- [Store Listing](docs/STORE_LISTING.md)
+- [Store Submission](docs/STORE_SUBMISSION.md)
+- [Changelog](docs/CHANGELOG.md)
